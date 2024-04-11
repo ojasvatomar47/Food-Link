@@ -61,10 +61,9 @@ export const loginUser = async (req, res) => {
             expiresIn: '1h',
         });
 
-        // Storing the token in a cookie
         res.cookie("accessToken", token, {
             httpOnly: true,
-        }).json({ message: 'User logged in successfully', username: user.username });
+        }).json({ message: 'User logged in successfully', user });
 
     } catch (error) {
         res.status(400).json({ message: error.message });
