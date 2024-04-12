@@ -12,6 +12,8 @@ const PORT = process.env.PORT || 8800;
 
 // Routes import
 import authRoutes from './routes/authRoutes.js';
+import listingRoutes from './routes/listingRoutes.js';
+import orderRoutes from './routes/orderRoutes.js';
 
 // Connect to MongoDB
 connectDB();
@@ -27,6 +29,8 @@ app.use(cors({
 
 // Routes
 app.use('/api', authRoutes);
+app.use('/api', listingRoutes);
+app.use('/api', orderRoutes);
 
 // Server Connection
 app.listen(PORT, () => {
