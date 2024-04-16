@@ -10,7 +10,7 @@ import {
 const router = express.Router();
 
 // Get listings created by a particular restaurant
-router.get('/listings', getRestaurantListings);
+router.get('/listings/:restaurantId', getRestaurantListings);
 
 // Create a new listing
 router.post('/listings', createListing);

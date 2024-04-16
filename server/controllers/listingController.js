@@ -6,7 +6,8 @@ import geolib from 'geolib';
 export const getRestaurantListings = async (req, res) => {
     try {
         // Fetch listings that are not expired
-        const listings = await Listing.find({ restaurantId: req.user._id, expiresAt: { $gte: new Date() } });
+        const { restaurantId } = req.params;
+        const listings = await Listing.find({ restaurantId: restaurantId, expiresAt: { $gte: new Date() } });
         res.json(listings);
     } catch (error) {
         res.status(500).json({ message: 'Server Error' });
@@ -15,13 +16,14 @@ export const getRestaurantListings = async (req, res) => {
 
 // Create a new listing
 export const createListing = async (req, res) => {
-    const { name, quantity, expiry } = req.body;
+    const { name, quantity, expiry, view, restaurantId } = req.body;
 
     const newListing = new Listing({
         name,
         quantity,
         expiry,
-        restaurantId: req.user._id
+        view,
+        restaurantId
     });
 
     try {
