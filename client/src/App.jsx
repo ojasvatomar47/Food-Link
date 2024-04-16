@@ -4,20 +4,32 @@ import {
   RouterProvider,
   Outlet,
 } from "react-router-dom";
+
+// Components
 import Navbar from './components/Navbar/Navbar';
 import Footer from './components/Footer/Footer';
+
+// Dashboard
 import HomePage from './pages/HomePage/HomePage';
-import RestaurantProfilePage from './pages/ProfilePages/RestaurantProfilePage/RestaurantProfilePage';
-import CharityProfilePage from './pages/ProfilePages/CharityProfilePage/CharityProfilePage';
+
+// Authentication Pages
 import SignUpPage from './pages/AuthenticationPages/SignUpPage/SignUpPage';
 import SignInPage from './pages/AuthenticationPages/SignInPage/SignInPage';
+
+// Restaurant Pages
+import RestaurantListingsPage from './pages/RestaurantPages/RestaurantListingsPage';
+import RestaurantTransactionsPage from './pages/RestaurantPages/RestaurantTransactionsPage';
+
+// NGO Pages
+import NGOListingsPage from './pages/NGOPages/NGOListingsPage';
+import NGOTransactionsPage from './pages/NGOPages/NGOTransactionsPage';
+
+// Other Pages
 import AboutPage from './pages/AboutPage/AboutPage';
+
+// Error Pages
 import NotFoundPage from './pages/ErrorPages/NotFoundPage/NotFoundPage';
 import InternalServerErrorPage from './pages/ErrorPages/InternalServerErrorPage/InternalServerErrorPage';
-import FoodListingsPage from './pages/FoodListingsPages/FoodListingsPage/FoodListingsPage';
-import SingleFoodListingPage from './pages/FoodListingsPages/SingleFoodListingPage/SingleFoodListingPage';
-import RestaurantDashboardPage from './pages/DashboardPages/RestaurantDashboardPage/RestaurantDashboardPage';
-import CharityDashboardPage from './pages/DashboardPages/CharityDashboardPage/CharityDashboardPage';
 
 const Layout = () => {
 
@@ -41,28 +53,20 @@ const router = createBrowserRouter([
         element: <HomePage />,
       },
       {
-        path: "/dashboard/restaurant",
-        element: <RestaurantDashboardPage />,
+        path: "/restaurant/listings",
+        element: <RestaurantListingsPage />,
       },
       {
-        path: "/dashboard/charity",
-        element: <CharityDashboardPage />,
+        path: "/restaurant/transactions",
+        element: <RestaurantTransactionsPage />,
       },
       {
-        path: "/profile/restaurant/:id", // Dynamic route for restaurant profile
-        element: <RestaurantProfilePage />,
+        path: "/ngo/listings",
+        element: <NGOListingsPage />,
       },
       {
-        path: "/profile/charity/:id", // Dynamic route for charity profile
-        element: <CharityProfilePage />,
-      },
-      {
-        path: "/foodListings/:restaurantId", // Dynamic route for food listings
-        element: <FoodListingsPage />,
-      },
-      {
-        path: "/singleFoodListing/:foodId", // Dynamic route for single food listing
-        element: <SingleFoodListingPage />,
+        path: "/ngo/transactions", 
+        element: <NGOTransactionsPage />,
       },
       {
         path: "/about",
