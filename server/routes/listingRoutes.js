@@ -4,7 +4,7 @@ import {
     createListing,
     updateListing,
     deleteListing,
-    getRestaurantsByNGO
+    getNearbyListings
 } from '../controllers/listingController.js';
 
 const router = express.Router();
@@ -22,6 +22,6 @@ router.put('/listings/:id', updateListing);
 router.delete('/listings/:id', deleteListing);
 
 // Get restaurants within 15km radius of an NGO with unblocked listings
-router.get('/restaurants-by-ngo', getRestaurantsByNGO);
+router.get('/nearbyRestaurants', getNearbyListings);
 
 export default router;

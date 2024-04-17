@@ -73,26 +73,70 @@ export const deleteListing = async (req, res) => {
     }
 };
 
-export const getRestaurantsByNGO = async (req, res) => {
-    const { latitude, longitude } = req.user; // Assuming req.user contains NGO's latitude and longitude
+// Haversine formula to calculate distance between two points
+const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371; // Radius of the Earth in km
+    const dLat = (lat2 - lat1) * (Math.PI / 180);
+    const dLon = (lon2 - lon1) * (Math.PI / 180);
+    const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * (Math.PI / 180)) *
+        Math.cos(lat2 * (Math.PI / 180)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c;
+    return distance; // Distance in km
+};
 
+export const getNearbyListings = async (req, res) => {
     try {
-        const restaurants = await User.find({ userType: 'Restaurant' });
+        let { latitude, longitude, ngoId } = req.query;
 
-        const restaurantsWithinRadius = restaurants.filter((restaurant) => {
-            const distance = geolib.getDistance(
-                { latitude: restaurant.latitude, longitude: restaurant.longitude },
-                { latitude, longitude }
+        // Convert latitude and longitude to numbers
+        latitude = parseFloat(latitude);
+        longitude = parseFloat(longitude);
+
+        const ngo = await User.findById(ngoId);
+        if (!ngo) {
+            return res.status(404).json({ message: 'NGO not found' });
+        }
+
+        // Fetch all not blocked listings with restaurant details
+        const listings = await Listing.find({ view: 'not blocked' })
+            .populate('restaurantId', 'username latitude longitude');
+
+        // Filter nearby listings
+        const nearbyListings = listings.filter((listing) => {
+            const restaurant = listing.restaurantId;
+            if (!restaurant || !restaurant.latitude || !restaurant.longitude) {
+                return false; // Skip if restaurant details are missing
+            }
+
+            const distance = calculateDistance(
+                latitude,
+                longitude,
+                restaurant.latitude,
+                restaurant.longitude
             );
 
-            // Convert distance to kilometers
-            const distanceInKm = distance / 1000;
+            // console.log(distance);
 
-            return distanceInKm <= 15; // Check if distance is within 15km radius
+            return distance <= 15; // Filter listings within 15km radius
         });
 
-        res.json(restaurantsWithinRadius);
+        // Prepare result
+        const result = nearbyListings.map((listing) => ({
+            name: listing.name,
+            restaurantName: listing.restaurantId.username,
+            quantity: listing.quantity,
+            expiry: listing.expiry,
+        }));
+
+        // console.log(result);
+        res.json(result);
     } catch (error) {
-        res.status(500).json({ message: 'Server Error' });
+        console.error('Error fetching nearby listings:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 };

@@ -1,9 +1,90 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
+import CardImage from '../../assets/food-link-card-img.jpg';
+import axios from 'axios';
+import { useAuth } from '../../context/AuthContext';
 
 const NGOListingsPage = () => {
-    return (
-        <div>NGOListingsPage</div>
-    )
-}
+    const [selectedListings, setSelectedListings] = useState([]);
+    const [restaurants, setRestaurants] = useState([]);
 
-export default NGOListingsPage
+    console.log(selectedListings);
+
+    const { user } = useAuth();
+
+    useEffect(() => {
+        const { longitude, latitude } = user;
+        const ngoId = user._id;
+
+        const fetchNearbyListings = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8800/api/nearbyRestaurants`, {
+                    params: {
+                        ngoId,
+                        longitude,
+                        latitude,
+                    },
+                });
+                // Group listings by restaurantName
+                const groupedRestaurants = {};
+                response.data.forEach((listing) => {
+                    if (!groupedRestaurants[listing.restaurantName]) {
+                        groupedRestaurants[listing.restaurantName] = [];
+                    }
+                    groupedRestaurants[listing.restaurantName].push(listing);
+                });
+                setRestaurants(groupedRestaurants);
+            } catch (error) {
+                console.error('Error fetching nearby listings:', error);
+            }
+        };
+
+        fetchNearbyListings();
+    }, [user]);
+
+    const handleSelect = (listing) => {
+        if (selectedListings.some((item) => item.name === listing.name)) {
+            setSelectedListings(selectedListings.filter((item) => item.name !== listing.name));
+        } else {
+            setSelectedListings([...selectedListings, listing]);
+        }
+    };
+
+    return (
+        <div className="container mx-auto p-8">
+            {Object.keys(restaurants).map((restaurantName, index) => (
+                <div key={index} className="mb-8">
+                    <h2 className="text-xl font-semibold mb-4">{restaurantName}</h2>
+                    <div className="flex overflow-x-auto">
+                        {restaurants[restaurantName].map((listing, idx) => (
+                            <div key={idx} className="card mr-4">
+                                <img src={CardImage} alt={listing.name} className="object-cover w-full h-48" />
+                                <h2 className="text-lg font-semibold mt-4">{listing.name}</h2>
+                                <div className="bg-gray-100 mt-4 p-2 rounded-sm w-full">
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="flex flex-col gap-1">
+                                            <span className="text-xs font-semibold text-gray-600">Quantity</span>
+                                            <span className="text-xs font-bold">{listing.quantity}</span>
+                                        </div>
+                                        <div className="flex flex-col gap-1">
+                                            <span className="text-xs font-semibold text-gray-600">Expiry</span>
+                                            <span className="text-xs font-bold">{listing.expiry} hr</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={() => handleSelect(listing)}
+                                    className="mt-4 p-2 bg-blue-500 text-white rounded-md"
+                                >
+                                    {selectedListings.some((item) => item.name === listing.name) ? 'Unselect' : 'Select'}
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                    <button className="mt-4 p-2 bg-blue-500 text-white rounded-md">Request</button>
+                </div>
+            ))}
+        </div>
+    );
+};
+
+export default NGOListingsPage;
