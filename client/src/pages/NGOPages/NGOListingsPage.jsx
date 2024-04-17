@@ -48,7 +48,7 @@ const NGOListingsPage = () => {
             setSelectedListings([...selectedListings, listing]);
         }
     };
-
+    
     return (
         <div className="container mx-auto p-8">
             {Object.keys(restaurants).map((restaurantName, index) => (
@@ -56,14 +56,14 @@ const NGOListingsPage = () => {
                     <h2 className="text-xl font-semibold mb-4">{restaurantName}</h2>
                     <div className="flex overflow-x-auto">
                         {restaurants[restaurantName].map((listing, idx) => (
-                            <div key={idx} className="card mr-4">
+                            <div key={idx} className="card mr-4" style={{ minWidth: '250px' }}> {/* Added minWidth */}
                                 <img src={CardImage} alt={listing.name} className="object-cover w-full h-48" />
                                 <h2 className="text-lg font-semibold mt-4">{listing.name}</h2>
                                 <div className="bg-gray-100 mt-4 p-2 rounded-sm w-full">
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="flex flex-col gap-1">
                                             <span className="text-xs font-semibold text-gray-600">Quantity</span>
-                                            <span className="text-xs font-bold">{listing.quantity}</span>
+                                            <span className="text-xs font-bold">{listing.quantity} kgs</span>
                                         </div>
                                         <div className="flex flex-col gap-1">
                                             <span className="text-xs font-semibold text-gray-600">Expiry</span>

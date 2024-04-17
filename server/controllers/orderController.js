@@ -8,13 +8,13 @@ export const createOrder = async (req, res) => {
 
     try {
         // Block view of the selected listings
-        await Promise.all(listings.map(async (listingId) => {
-            const listing = await Listing.findById(listingId);
-            if (listing) {
-                listing.view = 'blocked';
-                await listing.save();
-            }
-        }));
+        // await Promise.all(listings.map(async (listingId) => {
+        //     const listing = await Listing.findById(listingId);
+        //     if (listing) {
+        //         listing.view = 'blocked';
+        //         await listing.save();
+        //     }
+        // }));
 
         // Create the order
         const newOrder = new Order({
@@ -105,6 +105,15 @@ export const acceptOrder = async (req, res) => {
         order.restCode = restCode;
 
         await order.save();
+
+        // Block the view of each listing in the order
+        await Promise.all(order.listings.map(async (listingId) => {
+            const listing = await Listing.findById(listingId);
+            if (listing) {
+                listing.view = 'blocked';
+                await listing.save();
+            }
+        }));
 
         res.json(order);
     } catch (error) {
