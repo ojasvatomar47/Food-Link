@@ -128,6 +128,8 @@ export const getNearbyListings = async (req, res) => {
         // Prepare result
         const result = nearbyListings.map((listing) => ({
             name: listing.name,
+            listingId: listing._id,
+            restaurantId: listing.restaurantId._id,
             restaurantName: listing.restaurantId.username,
             quantity: listing.quantity,
             expiry: listing.expiry,
