@@ -150,9 +150,13 @@ export const cancelOrder = async (req, res) => {
             return res.status(400).json({ message: 'Invalid code' });
         }
 
-        // Delete listings associated with the order
+        // Unblock view for listings associated with the order
         for (const listingId of order.listings) {
-            await Listing.findByIdAndDelete(listingId);
+            const listing = await Listing.findById(listingId);
+            if (listing) {
+                listing.view = 'not blocked';
+                await listing.save();
+            }
         }
 
         order.status = 'cancelled';
