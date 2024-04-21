@@ -1,5 +1,5 @@
 import express from 'express';
-import { createOrder, getOrdersByRestaurant, getOrdersByNGO, declineOrder, acceptOrder, fulfillOrder, cancelOrder } from '../controllers/orderController.js';
+import { createOrder, getOrdersByRestaurant, getOrdersByNGO, declineOrder, acceptOrder, fulfillOrder, cancelOrder, addRestReview, addNgoReview } from '../controllers/orderController.js';
 
 const router = express.Router();
 
@@ -23,5 +23,11 @@ router.put('/orders/:id/cancel', cancelOrder);
 
 // Fulfill an order
 router.put('/orders/:id/fulfill', fulfillOrder);
+
+// Add a review for the restaurant
+router.post('/addRestReview/:orderId', addRestReview);
+
+// Add a review for the ngo
+router.post('/addNgoReview/:orderId', addNgoReview);
 
 export default router;

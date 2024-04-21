@@ -53,7 +53,7 @@ const orderSchema = new mongoose.Schema({
     }],
     status: {
         type: String,
-        enum: ['accepted', 'declined', 'requested', 'fulfilled', 'cancelled'],
+        enum: ['accepted', 'declined', 'requested', 'fulfilled', 'cancelled', 'dismissed'],
         default: 'requested'
     },
     restCode: {
@@ -62,13 +62,21 @@ const orderSchema = new mongoose.Schema({
     ngoCode: {
         type: String
     },
+    restReview: {
+        type: String,
+        default: ''
+    },
+    ngoReview: {
+        type: String,
+        default: ''
+    },
     createdAt: {
         type: Date,
         default: Date.now
     }
 });
 
-// Auto-decline and auto-cancel after 2 hours
+// Auto-decline and auto-dismiss after 2 hours
 orderSchema.pre('save', async function (next) {
     const twoHoursAgo = new Date();
     twoHoursAgo.setHours(twoHoursAgo.getHours() - 2);
@@ -85,8 +93,8 @@ orderSchema.pre('save', async function (next) {
         }));
     }
 
-    if (this.status === 'accepted' && this.createdAt <= twoHoursAgo && (this.status !== 'fulfilled' || this.status !== 'cancelled')) {
-        this.status = 'cancelled';
+    if (this.status === 'accepted' && this.createdAt <= twoHoursAgo) {
+        this.status = 'dismissed';
         // Set all associated listings to 'not blocked'
         await Promise.all(this.listings.map(async (listing) => {
             const foundListing = await Listing.findById(listing.listing);

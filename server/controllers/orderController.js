@@ -33,12 +33,32 @@ export const createOrder = async (req, res) => {
 
 // Get all orders for a particular restaurant
 export const getOrdersByRestaurant = async (req, res) => {
-    const { _id: restaurantId } = req.user; // Assuming req.user contains restaurant's ID
+    const { restaurantId } = req.query;
 
     try {
         const orders = await Order.find({ restaurantId })
+            .populate({
+                path: 'ngoId',
+                select: 'username'  // Assuming the NGO model has a 'username' field
+            })
             .sort({ createdAt: 'desc' }); // Sort by descending createdAt
-        res.json(orders);
+
+        // Map through orders to format data as needed
+        const formattedOrders = orders.map(order => ({
+            _id: order._id,
+            restaurantId: order.restaurantId,
+            ngoId: order.ngoId._id,
+            ngoName: order.ngoId.username,
+            listings: order.listings,
+            status: order.status,
+            createdAt: order.createdAt,
+            restCode: order.restCode,
+            ngoCode: order.ngoCode,
+            restReview: order.restReview,
+            ngoReview: order.ngoReview
+        }));
+
+        res.json(formattedOrders);
     } catch (error) {
         res.status(500).json({ message: 'Server Error' });
     }
@@ -46,17 +66,39 @@ export const getOrdersByRestaurant = async (req, res) => {
 
 // Get all orders for a particular NGO
 export const getOrdersByNGO = async (req, res) => {
-    const { _id: ngoId } = req.user; // Assuming req.user contains NGO's ID
+    const { ngoId } = req.query;
 
     try {
         const orders = await Order.find({ ngoId })
+            .populate({
+                path: 'restaurantId',
+                select: 'username'  // Assuming the User model has a 'username' field
+            })
+            .populate('listings.listing')
             .sort({ createdAt: 'desc' }); // Sort by descending createdAt
-        res.json(orders);
+
+        // Map through orders to format data as needed
+        const formattedOrders = orders.map(order => ({
+            _id: order._id,
+            restaurantId: order.restaurantId._id,
+            restaurantName: order.restaurantId.username,  // Assuming the User model has a 'username' field
+            ngoId: order.ngoId,
+            listings: order.listings,
+            status: order.status,
+            createdAt: order.createdAt,
+            restCode: order.restCode,
+            ngoCode: order.ngoCode,
+            restReview: order.restReview,
+            ngoReview: order.ngoReview
+        }));
+
+        res.json(formattedOrders);
     } catch (error) {
         res.status(500).json({ message: 'Server Error' });
     }
 };
 
+// Decline an order
 export const declineOrder = async (req, res) => {
     const { id } = req.params;
 
@@ -107,8 +149,8 @@ export const acceptOrder = async (req, res) => {
         await order.save();
 
         // Block the view of each listing in the order
-        await Promise.all(order.listings.map(async (listingId) => {
-            const listing = await Listing.findById(listingId);
+        await Promise.all(order.listings.map(async (list) => {
+            const listing = await Listing.findById(list.listing);
             if (listing) {
                 listing.view = 'blocked';
                 await listing.save();
@@ -124,8 +166,7 @@ export const acceptOrder = async (req, res) => {
 // Cancel an order
 export const cancelOrder = async (req, res) => {
     const { id } = req.params;
-    const { code } = req.body;
-    const { userType } = req.user; // Assuming req.user contains user's type (restaurant or NGO)
+    const { code, userType } = req.body;
 
     try {
         const order = await Order.findById(id);
@@ -171,8 +212,7 @@ export const cancelOrder = async (req, res) => {
 // Fulfill an order
 export const fulfillOrder = async (req, res) => {
     const { id } = req.params;
-    const { code } = req.body;
-    const { userType } = req.user; // Assuming req.user contains user's type (restaurant or NGO)
+    const { code, userType } = req.body;
 
     try {
         const order = await Order.findById(id);
@@ -208,5 +248,55 @@ export const fulfillOrder = async (req, res) => {
         res.json({ message: 'Order fulfilled successfully' });
     } catch (error) {
         res.status(500).json({ message: 'Server Error' });
+    }
+};
+
+// Add review from restaurant
+export const addRestReview = async (req, res) => {
+    const { orderId } = req.params;
+    const { review } = req.body;
+
+    try {
+        const order = await Order.findById(orderId);
+
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
+
+        if (order.restReview) {
+            return res.status(400).json({ message: 'Review already added' });
+        }
+
+        order.restReview = review;
+        await order.save();
+
+        res.status(201).json({ message: 'Review added successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Server Error', error: error.message });
+    }
+};
+
+// Add review from NGO
+export const addNgoReview = async (req, res) => {
+    const { orderId } = req.params;
+    const { review } = req.body;
+
+    try {
+        const order = await Order.findById(orderId);
+
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
+
+        if (order.ngoReview) {
+            return res.status(400).json({ message: 'Review already added' });
+        }
+
+        order.ngoReview = review;
+        await order.save();
+
+        res.status(201).json({ message: 'Review added successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Server Error', error: error.message });
     }
 };
