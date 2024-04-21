@@ -31,6 +31,28 @@ export const createOrder = async (req, res) => {
     }
 };
 
+// Get a particular order
+export const getOrderInfo = async (req, res) => {
+    try {
+        const orderId = req.params.orderId;
+
+        // Fetch order details
+        const order = await Order.findById(orderId)
+            .populate('restaurantId', 'username') // Fetching restaurant name
+            .populate('ngoId', 'username'); // Fetching NGO name
+
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
+
+        res.status(200).json(order);
+    } catch (error) {
+        console.error('Error fetching order:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+
 // Get all orders for a particular restaurant
 export const getOrdersByRestaurant = async (req, res) => {
     const { restaurantId } = req.query;

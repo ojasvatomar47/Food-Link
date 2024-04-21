@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import CardImage from '../../assets/food-link-card-img.jpg';
+import { Link, useNavigate } from 'react-router-dom';
 
 const RestaurantTransactionsPage = () => {
   const { user } = useAuth();
@@ -159,11 +160,13 @@ const RestaurantTransactionsPage = () => {
                   >
                     Fulfilled
                   </button>
-                  <button
-                    className="btn btn-blue px-4 py-2 rounded-md bg-blue-500 hover:bg-blue-600 text-white hover:text-white transition duration-300 ease-in-out"
-                  >
-                    Chat
-                  </button>
+                  <Link to={`/chat/${order._id}`}>
+                    <button
+                      className="btn btn-blue px-4 py-2 rounded-md bg-blue-500 hover:bg-blue-600 text-white hover:text-white transition duration-300 ease-in-out"
+                    >
+                      Chat
+                    </button>
+                  </Link>
                   <div className="ml-4">
                     <label className="block text-sm font-medium text-gray-700">Unique Restaurant Code:</label>
                     <div className="flex items-center">

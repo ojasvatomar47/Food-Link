@@ -24,6 +24,9 @@ import RestaurantTransactionsPage from './pages/RestaurantPages/RestaurantTransa
 import NGOListingsPage from './pages/NGOPages/NGOListingsPage';
 import NGOTransactionsPage from './pages/NGOPages/NGOTransactionsPage';
 
+// Chat-Interface
+import ChatRoomPage from './pages/ChatInterfacePages/ChatRoomPage/ChatRoomPage';
+
 // Other Pages
 import AboutPage from './pages/AboutPage/AboutPage';
 
@@ -65,7 +68,7 @@ const router = createBrowserRouter([
         element: <NGOListingsPage />,
       },
       {
-        path: "/ngo/transactions", 
+        path: "/ngo/transactions",
         element: <NGOTransactionsPage />,
       },
       {
@@ -81,6 +84,10 @@ const router = createBrowserRouter([
   {
     path: "/sign-in",
     element: <SignInPage />
+  },
+  {
+    path: "/chat/:orderId",
+    element: <ChatRoomPage />
   },
   {
     path: "/error/notfound",

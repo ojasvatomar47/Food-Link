@@ -1,5 +1,5 @@
 import express from 'express';
-import { createOrder, getOrdersByRestaurant, getOrdersByNGO, declineOrder, acceptOrder, fulfillOrder, cancelOrder, addRestReview, addNgoReview } from '../controllers/orderController.js';
+import { createOrder, getOrdersByRestaurant, getOrderInfo, getOrdersByNGO, declineOrder, acceptOrder, fulfillOrder, cancelOrder, addRestReview, addNgoReview } from '../controllers/orderController.js';
 
 const router = express.Router();
 
@@ -11,6 +11,9 @@ router.get('/orders/restaurant', getOrdersByRestaurant);
 
 // Get all orders for a particular NGO
 router.get('/orders/ngo', getOrdersByNGO);
+
+// Route to get a specific order's information
+router.get('/orders/:orderId', getOrderInfo);
 
 // Decline an order request
 router.put('/orders/:id/decline', declineOrder);
