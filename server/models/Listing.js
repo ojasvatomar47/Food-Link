@@ -17,7 +17,7 @@ const listingSchema = new mongoose.Schema({
     expiry: {
         type: Number,
         required: true,
-        enum: [1, 2, 3] // 1, 2, 3 hrs
+        enum: [1, 2, 3, 480] // 1, 2, 3 hrs
     },
     view: {
         type: String,

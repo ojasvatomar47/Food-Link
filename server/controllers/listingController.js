@@ -30,7 +30,7 @@ export const createListing = async (req, res) => {
         const savedListing = await newListing.save();
         res.status(201).json(savedListing);
     } catch (error) {
-        res.status(500).json({ message: 'Server Error' });
+        res.status(500).json({ message: 'Server Error', error: error.message });
     }
 };
 
