@@ -4,7 +4,7 @@ import crypto from 'crypto';
 
 // Create a new order request
 export const createOrder = async (req, res) => {
-    const { restaurantId, listings } = req.body;
+    const { restaurantId, listings, ngoId } = req.body;
 
     try {
         // Block view of the selected listings
@@ -19,7 +19,7 @@ export const createOrder = async (req, res) => {
         // Create the order
         const newOrder = new Order({
             restaurantId,
-            ngoId: req.user._id, // Assuming req.user contains NGO's ID
+            ngoId,
             listings,
             status: 'requested'
         });
@@ -27,7 +27,7 @@ export const createOrder = async (req, res) => {
         const savedOrder = await newOrder.save();
         res.status(201).json(savedOrder);
     } catch (error) {
-        res.status(500).json({ message: 'Server Error' });
+        res.status(500).json({ message: 'Server Error', error: error.message });
     }
 };
 

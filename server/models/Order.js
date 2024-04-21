@@ -14,9 +14,42 @@ const orderSchema = new mongoose.Schema({
         required: true
     },
     listings: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Listing',
-        required: true
+        listing: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Listing',
+            required: true
+        },
+        name: {
+            type: String,
+            required: true
+        },
+        quantity: {
+            type: Number,
+            required: true
+        },
+        expiry: {
+            type: Number,
+            required: true,
+            enum: [1, 2, 3, 480] // 1, 2, 3 hrs
+        },
+        restaurantId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: true
+        },
+        restaurantName: {
+            type: String,
+            required: true
+        },
+        view: {
+            type: String,
+            enum: ['blocked', 'not blocked'],
+            default: 'not blocked'
+        },
+        createdAt: {
+            type: Date,
+            default: Date.now
+        }
     }],
     status: {
         type: String,
@@ -43,11 +76,11 @@ orderSchema.pre('save', async function (next) {
     if (this.status === 'requested' && this.createdAt <= twoHoursAgo) {
         this.status = 'declined';
         // Set all associated listings to 'not blocked'
-        await Promise.all(this.listings.map(async (listingId) => {
-            const listing = await Listing.findById(listingId);
-            if (listing) {
-                listing.view = 'not blocked';
-                await listing.save();
+        await Promise.all(this.listings.map(async (listing) => {
+            const foundListing = await Listing.findById(listing.listing);
+            if (foundListing) {
+                foundListing.view = 'not blocked';
+                await foundListing.save();
             }
         }));
     }
@@ -55,11 +88,11 @@ orderSchema.pre('save', async function (next) {
     if (this.status === 'accepted' && this.createdAt <= twoHoursAgo && (this.status !== 'fulfilled' || this.status !== 'cancelled')) {
         this.status = 'cancelled';
         // Set all associated listings to 'not blocked'
-        await Promise.all(this.listings.map(async (listingId) => {
-            const listing = await Listing.findById(listingId);
-            if (listing) {
-                listing.view = 'not blocked';
-                await listing.save();
+        await Promise.all(this.listings.map(async (listing) => {
+            const foundListing = await Listing.findById(listing.listing);
+            if (foundListing) {
+                foundListing.view = 'not blocked';
+                await foundListing.save();
             }
         }));
     }

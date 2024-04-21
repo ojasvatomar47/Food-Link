@@ -48,7 +48,51 @@ const NGOListingsPage = () => {
             setSelectedListings([...selectedListings, listing]);
         }
     };
-    
+
+    const handleRequest = async () => {
+        console.log('Inside handleRequest');
+        console.log('User:', user);
+
+        if (selectedListings.length === 0) {
+            alert('Please select at least one listing to request.');
+            return;
+        }
+
+        try {
+            console.log('Selected Listings:', selectedListings);
+
+            const listingsData = selectedListings.map((listing) => ({
+                listing: String(listing.listingId),
+                name: listing.name,
+                quantity: listing.quantity,
+                expiry: listing.expiry,
+                restaurantId: String(listing.restaurantId),
+                restaurantName: listing.restaurantName,
+                view: 'not blocked'
+            }));
+            console.log(listingsData);
+
+            const orderData = {
+                restaurantId: String(selectedListings[0].restaurantId),
+                ngoId: String(user._id),
+                listings: listingsData
+            };
+
+            console.log('Order Data:', orderData);
+
+            const response = await axios.post('http://localhost:8800/api/orders', orderData);
+
+            if (response.status === 201) {
+                alert('Order requested successfully!');
+                setSelectedListings([]);
+            }
+        } catch (error) {
+            console.error('Error creating order:', error);
+            alert('Failed to create order. Please try again.');
+        }
+    };
+
+
     return (
         <div className="container mx-auto p-8">
             {Object.keys(restaurants).map((restaurantName, index) => (
@@ -80,7 +124,9 @@ const NGOListingsPage = () => {
                             </div>
                         ))}
                     </div>
-                    <button className="mt-4 p-2 bg-blue-500 text-white rounded-md">Request</button>
+                    <button onClick={handleRequest} className="mt-4 p-2 bg-blue-500 text-white rounded-md">
+                        Request
+                    </button>
                 </div>
             ))}
         </div>
