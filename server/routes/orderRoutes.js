@@ -1,5 +1,5 @@
 import express from 'express';
-import { createOrder, getOrdersByRestaurant, getOrderInfo, getOrdersByNGO, declineOrder, acceptOrder, fulfillOrder, cancelOrder, addRestReview, addNgoReview } from '../controllers/orderController.js';
+import { createOrder, getOrdersByRestaurant, getMessagesByOrderId, getOrderInfo, getOrdersByNGO, declineOrder, acceptOrder, fulfillOrder, cancelOrder, addRestReview, addNgoReview } from '../controllers/orderController.js';
 
 const router = express.Router();
 
@@ -26,6 +26,9 @@ router.put('/orders/:id/cancel', cancelOrder);
 
 // Fulfill an order
 router.put('/orders/:id/fulfill', fulfillOrder);
+
+// Get chat messages for an order id
+router.get('/orders/:orderId/messages', getMessagesByOrderId);
 
 // Add a review for the restaurant
 router.post('/addRestReview/:orderId', addRestReview);

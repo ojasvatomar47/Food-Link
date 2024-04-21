@@ -1,6 +1,7 @@
 import Order from '../models/Order.js';
 import Listing from '../models/Listing.js';
 import crypto from 'crypto';
+import Chat from '../models/Chat.js';
 
 // Create a new order request
 export const createOrder = async (req, res) => {
@@ -320,5 +321,20 @@ export const addNgoReview = async (req, res) => {
         res.status(201).json({ message: 'Review added successfully' });
     } catch (error) {
         res.status(500).json({ message: 'Server Error', error: error.message });
+    }
+};
+
+// Get chat messages for a particular order id
+export const getMessagesByOrderId = async (req, res) => {
+    try {
+        const { orderId } = req.params;
+
+        // Fetch messages from the database for the specific order ID
+        const messages = await Chat.find({ orderId });
+
+        res.status(200).json({ messages });
+    } catch (error) {
+        console.error('Error fetching messages:', error);
+        res.status(500).json({ message: 'Error fetching messages' });
     }
 };

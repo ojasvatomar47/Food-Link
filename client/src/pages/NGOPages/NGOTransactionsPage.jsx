@@ -126,13 +126,13 @@ const NGOTransactionsPage = () => {
                                     >
                                         Fulfilled
                                     </button>
-                                    <Link to={`/chat/${order._id}`}>
+                                    {/* <Link to={`/chat/${order._id}`}>
                                         <button
                                             className="btn btn-blue px-4 py-2 rounded-md bg-blue-500 hover:bg-blue-600 text-white hover:text-white transition duration-300 ease-in-out"
                                         >
                                             Chat
                                         </button>
-                                    </Link>
+                                    </Link> */}
                                     <div className="ml-4">
                                         <label className="block text-sm font-medium text-gray-700">Unique NGO Code:</label>
                                         <div className="flex items-center">
@@ -154,6 +154,16 @@ const NGOTransactionsPage = () => {
                                         </div>
                                     </div>
                                 </div>
+                            )}
+
+                            {(order.status === 'accepted' || order.status === 'fulfilled' || order.status === 'cancelled' || order.status === 'dismissed') && (
+                                <Link to={`/chat/${order._id}`}>
+                                    <button
+                                        className="btn btn-blue px-4 py-2 rounded-md bg-blue-500 hover:bg-blue-600 text-white hover:text-white transition duration-300 ease-in-out"
+                                    >
+                                        Chat
+                                    </button>
+                                </Link>
                             )}
                             {canReview && (
                                 <button
