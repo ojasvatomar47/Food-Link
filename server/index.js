@@ -1,38 +1,65 @@
 import express from 'express';
+import http from 'http';
+import { Server } from 'socket.io';
 import connectDB from './db.js';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import Chat from './models/Chat.js';
 
-// Load environment variables
 dotenv.config();
 
-// Initialize Express App
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, { cors: { origin: 'http://localhost:5173' } });
 const PORT = process.env.PORT || 8800;
 
-// Routes import
 import authRoutes from './routes/authRoutes.js';
 import listingRoutes from './routes/listingRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 
-// Connect to MongoDB
 connectDB();
 
-// Middleware
 app.use(express.json());
-
-// CORS Middleware
 app.use(cors({
-    origin: 'http://localhost:5173',  // Allow requests from port 5173
-    credentials: true,  // Allow cookies to be sent and received cross-domain
+    origin: 'http://localhost:5173',
+    credentials: true,
 }));
-
-// Routes
 app.use('/api', authRoutes);
 app.use('/api', listingRoutes);
 app.use('/api', orderRoutes);
 
-// Server Connection
-app.listen(PORT, () => {
+io.on('connection', (socket) => {
+    console.log('A user connected!');
+
+    socket.on('join_chat_room', (orderId) => {
+        socket.join(orderId);
+        console.log(`User ${socket.id} joined room for order ${orderId}`);
+    });
+
+    socket.on('send_chat_message', async ({ message, orderId, sender }) => {
+        const newMessage = new Chat({
+            message,
+            sender,
+            orderId,
+        });
+
+        try {
+            await newMessage.save();
+            console.log('Message saved successfully!');
+            io.to(orderId).emit('receive_chat_message', {
+                message,
+                sender,
+            });
+        } catch (error) {
+            console.error('Error saving message:', error);
+        }
+    });
+
+    socket.on('disconnect', () => {
+        console.log('A user disconnected!');
+    });
+});
+
+server.listen(PORT, () => {
     console.log(`Server is running on PORT => ${PORT}`);
 });
