@@ -5,6 +5,7 @@ import { useAuth } from '../../../context/AuthContext';
 import { Link } from 'react-router-dom';
 import io from 'socket.io-client';
 import { useRef } from 'react';
+import { useDarkMode } from '../../../context/DarkModeContext';
 
 const ChatRoomPage = () => {
   const { user } = useAuth();
@@ -20,6 +21,7 @@ const ChatRoomPage = () => {
   const [fulfillCode, setFulfillCode] = useState('');
   const [fulfillMessage, setFulfillMessage] = useState('');
   const socketRef = useRef(null);
+  const { isDarkMode } = useDarkMode();
 
   const fetchOrderDetails = async () => {
     try {
@@ -119,12 +121,12 @@ const ChatRoomPage = () => {
   const isOrderAccepted = orderDetails?.status === 'accepted';
 
   return (
-    <div className="container mx-auto p-8 flex flex-col h-screen">
+    <div className={`container mx-auto p-8 flex flex-col h-screen ${isDarkMode ? 'bg-gray-800' : 'bg-gray-200'}`}>
       {orderDetails && (
-        <div className="order-details p-4 bg-white rounded-lg shadow-md mb-4">
+        <div className={`flex flex-col order-details p-4 bg-white rounded-lg shadow-md mb-4 ${isDarkMode ? 'text-gray-300 bg-gray-700' : 'text-gray-600 hover:bg-gray-100 transition duration-300 ease-in-out'}`}>
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold">Order #{orderId}</h2>
-            <div className={`font-semibold py-1 px-2 rounded capitalize 
+            <div className={`text-xs md:text-lg font-semibold py-1 px-2 text-white rounded capitalize 
                 ${orderDetails.status === 'requested' ? 'bg-yellow-500'
                 : orderDetails.status === 'accepted' ? 'bg-green-500'
                   : orderDetails.status === 'fulfilled' ? 'bg-blue-500'
@@ -135,8 +137,8 @@ const ChatRoomPage = () => {
               {orderDetails.status}
             </div>
           </div>
-          <p>Restaurant: {orderDetails.restaurantId.username}</p>
-          <p>NGO: {orderDetails.ngoId.username}</p>
+          <p className="font-semibold">Restaurant: {orderDetails.restaurantId.username}</p>
+          <p className="font-semibold">NGO: {orderDetails.ngoId.username}</p>
           {user.userType === 'restaurant' && orderDetails.status === 'requested' && (
             <div className="flex mt-2">
               <button
@@ -153,18 +155,28 @@ const ChatRoomPage = () => {
               </button>
             </div>
           )}
-          <Link to={user.userType === 'Restaurant' ? '/restaurant/transactions' : '/ngo/transactions'}
-            className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-          >
-            Back
-          </Link>
+          <div className="flex">
+            <Link to={user.userType === 'Restaurant' ? '/restaurant/transactions' : '/ngo/transactions'}
+              className="w-1/2 mr-2 mt-2"
+            >
+              <button className="btn btn-blue px-2 py-3 md:px-4 md:py-2 w-full font-bold rounded-md bg-blue-500 hover:bg-blue-600 text-white hover:text-white transition duration-300 ease-in-out">
+                Back
+              </button>
+            </Link>
+            <button
+              onClick={handleViewListings}
+              className="w-1/2 bg-blue-500 text-xs md:text-sm hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md mt-2"
+            >
+              View Listings Requested
+            </button>
+          </div>
           {orderDetails.status === 'accepted' && (
             <div className="flex mt-2">
               <button
                 onClick={() => {
                   setShowCancelModal(true);
                 }}
-                className="btn btn-red mr-2 px-4 py-2 rounded-md bg-red-500 hover:bg-red-600 text-white hover:text-white transition duration-300 ease-in-out"
+                className="btn btn-red w-1/4 mr-2 px-4 py-2 text-xs md:text-sm font-bold rounded-md bg-red-500 hover:bg-red-600 text-white hover:text-white transition duration-300 ease-in-out"
               >
                 Cancelled
               </button>
@@ -172,27 +184,21 @@ const ChatRoomPage = () => {
                 onClick={() => {
                   setShowFulfillModal(true);
                 }}
-                className="btn btn-green mr-2 px-4 py-2 rounded-md bg-green-500 hover:bg-green-600 text-white hover:text-white transition duration-300 ease-in-out"
+                className="btn btn-green w-1/4 mr-2 px-4 py-2 text-xs md:text-sm font-bold rounded-md bg-green-500 hover:bg-green-600 text-white hover:text-white transition duration-300 ease-in-out"
               >
                 Fulfilled
               </button>
-              <button
-                onClick={handleViewListings}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2"
-              >
-                View Listings Requested
-              </button>
-              <div className="ml-4">
-                <label className="block text-sm font-medium text-gray-700">Your Code:</label>
+              <div className="w-1/2 ml-4">
+                <label className={`block text-xs font-medium md:text-sm text-gray-700 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>Your Code:</label>
                 <div className="flex items-center">
                   <input
                     type="text"
-                    className="flex-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    className={`flex-1 block w-2/3 md:text-md md:w-2/3 md:py-2 lg:w-3/4 lg:py-2 border-gray-300 rounded-md shadow-lg focus:ring-indigo-500 focus:border-indigo-500 ${isDarkMode ? 'bg-gray-600' : ''}`}
                     value={currentUserType === "Restaurant" ? orderDetails.restCode : orderDetails.ngoCode}
                     readOnly
                   />
                   <button
-                    className="ml-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    className="w-1/3 text-xs font-bold px-2 py-1 ml-1 md:text-sm md:ml-2 md:w-1/3 md:px-4 md:py-2 lg:ml-2 lg:w-1/4 lg:px-4 lg:py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                     onClick={() => {
                       navigator.clipboard.writeText(orderDetails.restCode);
                       alert('Code copied to clipboard!');
@@ -282,7 +288,7 @@ const ChatRoomPage = () => {
         {chatMessages.map((message, index) => (
           <div
             key={index}
-            className={`chat-message flex p-3 rounded-lg mb-2 ${message.sender === user._id ? 'bg-blue-500 text-white justify-end' : 'bg-gray-100 text-black justify-start'}`}
+            className={`chat-message flex p-3 rounded-lg mb-2 ${((!isDarkMode) && (message.sender === user._id)) && 'bg-blue-500 text-white justify-end'} ${((!isDarkMode) && !(message.sender === user._id)) && 'bg-gray-100 text-black justify-start'} ${isDarkMode && (message.sender === user._id) && 'bg-gray-600 text-gray-200 justify-end'} ${isDarkMode && !(message.sender === user._id) && 'bg-gray-400 text-gray-800'}`}
           >
             {message.sender !== user._id && (
               <span className="message-sender mr-2 font-bold">{message.sender}: </span>
@@ -294,19 +300,19 @@ const ChatRoomPage = () => {
 
       {/* Chat Input */}
       {isOrderAccepted && (
-        <div className="chat-input-form py-2 px-3 border-t border-gray-200">
+        <div className={`chat-input-form flex py-2 px-3 border rounded-lg shadow-lg border-gray-200 ${isDarkMode ? 'bg-gray-700 text-gray-200' : ''}`}>
           <input
             type="text"
             placeholder="Enter message..."
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            className="w-full rounded-md p-2 outline-none"
+            className={`w-full rounded-md p-2 outline-none ${isDarkMode ? 'bg-gray-600' : ''}`}
             disabled={!isOrderAccepted}
           />
           <button
             type="button"
             onClick={handleSendMessage}
-            className={`ml-2 px-4 py-2 rounded-md ${isOrderAccepted ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-500'}`}
+            className={`ml-2 px-4 py-2 text-xs md:text-sm font-bold rounded-md ${isOrderAccepted ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-500'}`}
             disabled={!isOrderAccepted}
           >
             Send
