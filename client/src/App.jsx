@@ -30,6 +30,9 @@ import ChatRoomPage from './pages/ChatInterfacePages/ChatRoomPage/ChatRoomPage';
 // Other Pages
 import AboutPage from './pages/AboutPage/AboutPage';
 
+// Context
+import { DarkModeProvider } from './context/DarkModeContext';
+
 // Error Pages
 import NotFoundPage from './pages/ErrorPages/NotFoundPage/NotFoundPage';
 import InternalServerErrorPage from './pages/ErrorPages/InternalServerErrorPage/InternalServerErrorPage';
@@ -102,9 +105,11 @@ const router = createBrowserRouter([
 
 const App = () => {
   return (
-    <div>
-      <RouterProvider router={router} />
-    </div>
+    <DarkModeProvider>
+      <div>
+        <RouterProvider router={router} />
+      </div>
+    </DarkModeProvider>
   )
 }
 
