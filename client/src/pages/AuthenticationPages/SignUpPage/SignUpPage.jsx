@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/AuthContext';
+import registerimage from '../../../assets/registerimage.png';
+import { useDarkMode } from '../../../context/DarkModeContext.jsx';
 
 const SignUp = () => {
-
+const { isDarkMode } = useDarkMode();
   const { register } = useAuth();
   const navigate = useNavigate();
 
@@ -17,6 +19,8 @@ const SignUp = () => {
     longitude: '',
     locationName: '',
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const [passwordMatch, setPasswordMatch] = useState(true);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,6 +28,10 @@ const SignUp = () => {
       ...formData,
       [name]: value,
     });
+    if (name === 'confirmPassword') {
+      setPasswordMatch(value === formData.password);
+    }
+
   };
 
   const handleLocationClick = () => {
@@ -56,61 +64,144 @@ const SignUp = () => {
     }
   };
 
-  return (
-    <div>
-      <h2>Sign Up</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="username"
-          placeholder="Username"
-          value={formData.username}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
-        <select name="userType" onChange={handleChange} required>
-          <option value="">Select User Type</option>
-          <option value="Restaurant">Restaurant</option>
-          <option value="Charity/NGO">Charity/NGO</option>
-        </select>
-        <input
-          type="text"
-          name="verificationCode"
-          placeholder="Verification Code"
-          value={formData.verificationCode}
-          onChange={handleChange}
-          required
-        />
-        <button type="button" onClick={handleLocationClick}>
-          Add My Location
-        </button>
-        <input
-          type="text"
-          name="locationName"
-          placeholder="Location Name"
-          value={formData.locationName}
-          onChange={handleChange}
-        />
-        <button type="submit">Sign Up</button>
-      </form>
+  
+return (
+  <div className={`min-h-screen flex items-center py-2 sm:py-40  ${isDarkMode?'shadow bg-gradient-to-r from-gray-700 to-gray-900' : 'bg-white shadow-xl'}`}>
+    <div className="container mx-auto px-2 sm:px-6 lg:px-8">
+      <div className="flex flex-col sm:flex-row w-full sm:w-10/12 lg:w-8/1 bg-gray-300 rounded-xl mx-auto shadow-lg overflow-hidden">
+        <div className="w-full hidden lg:block lg:w-1/2 flex flex-col items-center justify-center p-2 sm:p-12 bg-no-repeat bg-cover bg-center" style={{ backgroundImage:`url(${registerimage})`  }}>
+          <h1 className="text-white text-3xl mb-3">Sign Up</h1>
+          <div>
+            <p className="text-white">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean suspendisse aliquam varius rutrum purus maecenas ac <a href="#" className="text-purple-500 font-semibold">Learn more</a></p>
+          </div>
+        </div>
+        <div className="w-full lg:w-1/2 py-2 sm:py-16  px-2 sm:px-12">
+          <h2 className="text-3xl mb-4">Register</h2>
+          <p className="mb-4">
+            Create your account. It’s free and only takes a minute.
+          </p>
+          <form onSubmit={handleSubmit}>
+            <div className="mt-5">
+              <input type="text"
+                name="username"
+                placeholder="Username"
+                value={formData.username}
+                onChange={handleChange}
+                className="border border-gray-400 py-1 px-2 w-full"
+                minLength={7}
+                required
+              />
+            </div>
+            <div className="mt-5">
+              <input type="email"
+                name="email"
+                placeholder="Email"
+                value={formData.email}
+                onChange={handleChange}
+                className="border border-gray-400 py-1 px-2 w-full"
+                required
+              />
+            </div>
+            <div className="mt-5 input-group relative">
+              <input type={showPassword ? "text" : "password"}
+                name="password"
+                placeholder="Password (one upper,one lower one special character)"
+                className="border border-gray-400 py-1 px-2 w-full"
+                value={formData.password}
+                onChange={handleChange}
+                pattern="^(?=.*[a-z])(?=.*[A-Z]).{8,}$"
+                required
+              />
+              <div className="mt-5 input-group">
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute top-2 right-0.5 text-gray-500"
+                >
+                  {showPassword ? (
+                    <svg className="h-5 w-5 text-gray-400 cursor-pointer" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 12a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                      <path fillRule="evenodd" d="M10 0a9 9 0 00-9 9c0 8 9 11 9 11s9-3 9-11a9 9 0 00-9-9zm0 15a4 4 0 100-8 4 4 0 000 8z" clipRule="evenodd" />
+                    </svg>
+                  ) : (
+                    <svg className="h-5 w-5 text-gray-400 cursor-pointer" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M10 12a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                      <path fillRule="evenodd" d="M10 0a9 9 0 00-9 9c0 8 9 11 9 11s9-3 9-11a9 9 0 00-9-9zm0 15a4 4 0 100-8 4 4 0 000 8z" clipRule="evenodd" />
+                    </svg>
+                  )}
+                </button>
+              </div>
+            </div>
+            <div className="mt-2">
+              {!passwordMatch && (
+                <p className="text-red-500">Passwords do not match</p>
+              )}
+            </div>
+            <div className="mt-5">
+              <input type={showPassword ? "text" : "password"}
+                name="confirmPassword"
+                placeholder="Confirm Password"
+                className="border border-gray-400 py-1 px-2 w-full"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                // pattern="^(?=.*[a-z])(?=.*[A-Z]).{8,}$"
+                required
+              />
+            </div>
+            <div className="mt-5">
+              <select name="userType" onChange={handleChange} required>
+                <option value="">Select User Type</option>
+                <option value="Restaurant">Restaurant</option>
+                <option value="Charity/NGO">Charity/NGO</option>
+              </select>
+            </div>
+            <div className="mt-5">
+              <input type="text"
+                name="verificationCode"
+                placeholder="Verification Code"
+                value={formData.verificationCode}
+                onChange={handleChange}
+                className="border border-gray-400 py-1 px-2 w-full"
+                required
+              />
+            </div>
+            <div className="mt-5">
+              <button
+                type="button"
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                onClick={handleLocationClick}
+              >
+                <span className="absolute left-0 inset-y-0 flex items-center pl-3">
+                  <svg className="h-5 w-5 text-indigo-500 group-hover:text-indigo-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fillRule="evenodd" d="M10 12a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                    <path fillRule="evenodd" d="M10 0a9 9 0 00-9 9c0 8 9 11 9 11s9-3 9-11a9 9 0 00-9-9zm0 15a4 4 0 100-8 4 4 0 000 8z" clipRule="evenodd" />
+                  </svg>
+                </span>
+                Add My Location
+              </button>
+            </div>
+            <div className="mt-5">
+              <input type="text"
+                name="locationName"
+                placeholder="Location name"
+                value={formData.locationName}
+                onChange={handleChange}
+                className="border border-gray-400 py-1 px-2 w-full"
+                required
+              />
+            </div>
+            <div className="mt-5">
+              <button
+                type="submit"
+                // disabled={passwordMatch || !formData.username || !formData.email || !formData.password || !formData.confirmPassword || !formData.verificationCode || !formData.locationName ? true : false}
+                className="w-full bg-purple-500 py-3 hover:bg-blue-700 disabled:cursor-not-allowed text-center text-white transition duration-200 ease-in-out hover:scale-105">Sign Up</button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
-  );
+  </div>
+);
 };
 
 export default SignUp;
