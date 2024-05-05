@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import CardImage from '../../assets/food-link-card-img.jpg';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
+import { useDarkMode } from '../../context/DarkModeContext';
 
 const NGOListingsPage = () => {
     const [selectedListings, setSelectedListings] = useState([]);
     const [restaurants, setRestaurants] = useState([]);
+    const { isDarkMode } = useDarkMode();
 
     console.log(selectedListings);
 
@@ -92,45 +94,50 @@ const NGOListingsPage = () => {
         }
     };
 
-
     return (
-        <div className="container mx-auto p-8">
+        <div className={`container mx-auto p-8 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-200'}`}>
             {Object.keys(restaurants).map((restaurantName, index) => (
                 <div key={index} className="mb-8">
-                    <h2 className="text-xl font-semibold mb-4">{restaurantName}</h2>
+                    <h2 className={`text-md md:text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-600'}`}>
+                        {restaurantName}
+                    </h2>
                     <div className="flex overflow-x-auto">
                         {restaurants[restaurantName].map((listing, idx) => (
-                            <div key={idx} className="card mr-4" style={{ minWidth: '250px' }}> {/* Added minWidth */}
-                                <img src={CardImage} alt={listing.name} className="object-cover w-full h-48" />
-                                <h2 className="text-lg font-semibold mt-4">{listing.name}</h2>
-                                <div className="bg-gray-100 mt-4 p-2 rounded-sm w-full">
+                            <div key={idx} className="card mr-4 md:min-w-[250px] min-w-[150px]">
+                                <img src={CardImage} alt={listing.name} className="object-cover w-full h-32 md:h-48 sm:w-auto sm:max-w-full" />
+                                <h2 className={`text-md md:text-lg font-semibold mt-4 ${isDarkMode ? 'text-gray-200' : 'text-gray-600'}`}>
+                                    {listing.name}
+                                </h2>
+                                <div className={`mt-4 p-2 h-12 rounded-sm w-full ${isDarkMode ? 'bg-gray-600 text-gray-200' : 'bg-gray-200 text-gray-600'}`}>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="flex flex-col gap-1">
-                                            <span className="text-xs font-semibold text-gray-600">Quantity</span>
-                                            <span className="text-xs font-bold">{listing.quantity} kgs</span>
+                                            <span className={`${isDarkMode ? 'text-gray-300' : 'text-gray-800'} text-xs font-semibold`}>Quantity</span>
+                                            <span className={`${isDarkMode ? 'text-gray-300' : 'text-gray-800'} text-xs font-bold`}>{listing.quantity} kgs</span>
                                         </div>
                                         <div className="flex flex-col gap-1">
-                                            <span className="text-xs font-semibold text-gray-600">Expiry</span>
-                                            <span className="text-xs font-bold">{listing.expiry} hr</span>
+                                            <span className={`${isDarkMode ? 'text-gray-300' : 'text-gray-800'} text-xs font-semibold`}>Expiry</span>
+                                            <span className={`${isDarkMode ? 'text-gray-300' : 'text-gray-800'} text-xs font-bold`}>{listing.expiry} hr</span>
                                         </div>
                                     </div>
                                 </div>
                                 <button
                                     onClick={() => handleSelect(listing)}
-                                    className="mt-4 p-2 bg-blue-500 text-white rounded-md"
+                                    className={`mt-4 p-2 text-xs md:text-md ${isDarkMode ? 'bg-blue-700' : 'bg-blue-700'} text-white rounded-md`}
                                 >
                                     {selectedListings.some((item) => item.name === listing.name) ? 'Unselect' : 'Select'}
                                 </button>
                             </div>
                         ))}
                     </div>
-                    <button onClick={handleRequest} className="mt-4 p-2 bg-blue-500 text-white rounded-md">
+                    <button onClick={handleRequest} className={`mt-4 p-2 text-xs md:text-md bg-blue-700 text-white rounded-md ${isDarkMode ? 'w-14 h-8' : 'w-19 h-10'}`}>
                         Request
                     </button>
                 </div>
             ))}
         </div>
     );
+    
+    
 };
 
 export default NGOListingsPage;

@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import CardImage from '../../assets/food-link-card-img.jpg';
 import axios from 'axios';
-import '../../App.css'
+import '../../App.css';
+import { useDarkMode } from '../../context/DarkModeContext';
 
 const RestaurantListingsPage = () => {
   const { user } = useAuth();
   const restaurantId = user._id;
+  const { isDarkMode } = useDarkMode();
 
   const [newName, setNewName] = useState('');
   const [newQuantity, setNewQuantity] = useState('');
@@ -28,7 +30,7 @@ const RestaurantListingsPage = () => {
   useEffect(() => {
     const fetchListings = async () => {
       try {
-        const response = await axios.get(`http://localhost:8800/api/listings/${restaurantId}`);
+        const response = await axios.get('http://localhost:8800/api/listings/${restaurantId}');
         setListings(response.data);
       } catch (error) {
         console.error('Error fetching listings:', error);
@@ -72,7 +74,7 @@ const RestaurantListingsPage = () => {
   const handleDeleteListing = async (id) => {
     setButtonText('Deleting...');
     try {
-      await axios.delete(`http://localhost:8800/api/listings/${id}`);
+      await axios.delete('http://localhost:8800/api/listings/${id}');
       const updatedListings = listings.filter((listing) => listing._id !== id);
       setListings(updatedListings);
       setFeedback('Listing deleted successfully.');
@@ -112,7 +114,7 @@ const RestaurantListingsPage = () => {
           expiry: parseInt(selectedExpiry),
         };
 
-        const response = await axios.put(`http://localhost:8800/api/listings/${selectedListing._id}`, updatedListing);
+        const response = await axios.put('http://localhost:8800/api/listings/${selectedListing._id}, updatedListing');
         const updatedListings = listings.map((listing) =>
           listing._id === response.data._id ? response.data : listing
         );
@@ -138,29 +140,29 @@ const RestaurantListingsPage = () => {
   };
 
   return (
-    <div className="container mx-auto p-8">
-      {showFeedback && <div className="feedback">{feedback}</div>}
+    <div className={`container mx-auto p-8 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-200'}`}>
+      {showFeedback && <div className={`feedback ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>{feedback}</div>}
       <div className="mb-8">
-        <h1 className="text-2xl font-semibold mb-4">Add New Listing</h1>
-        <div className="grid grid-cols-3 gap-4">
+        <h1 className={`text-2xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-600'}`}>Add New Listing</h1>
+        <div className="grid sm:grid-cols-1 md:grid-cols-3 gap-4">
           <input
             type="text"
             placeholder="Name"
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
-            className="p-2 border rounded-md"
+            className={`p-2 text-sm border rounded-md ${isDarkMode ? 'text-gray-300 bg-gray-700' : 'text-gray-600 bg-white'}`}
           />
           <input
             type="number"
             placeholder="Quantity in kgs"
             value={newQuantity}
             onChange={(e) => setNewQuantity(e.target.value)}
-            className="p-2 border rounded-md"
+            className={`p-2 border rounded-md ${isDarkMode ? 'text-gray-300 bg-gray-700' : 'text-gray-600 bg-white'}`}
           />
           <select
             value={newExpiry}
             onChange={(e) => setNewExpiry(e.target.value)}
-            className="p-2 border rounded-md"
+            className={`p-2 border rounded-md ${isDarkMode ? 'text-gray-300 bg-gray-700' : 'text-gray-600 bg-white'}`}
           >
             <option value="">Select Expiry</option>
             <option value="1">1 hr</option>
@@ -169,7 +171,7 @@ const RestaurantListingsPage = () => {
           </select>
           <button
             onClick={handleAddListing}
-            className="col-span-3 p-2 bg-blue-500 text-white rounded-md relative"
+            className={`sm:col-span-1 md:col-span-3 p-2 bg-blue-500 text-white rounded-md relative ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}
           >
             {buttonText || 'Add'}
             {buttonText && <div className="overlay"></div>}
@@ -186,24 +188,24 @@ const RestaurantListingsPage = () => {
                 className="object-cover w-full h-full"
               />
             </div>
-            <h2 className="text-lg font-semibold mt-4">
+            <h2 className={`text-lg font-semibold mt-4 ${isDarkMode ? 'text-gray-300' : 'text-gray-800'}`}>
               {listing.name}
             </h2>
-            <div className="bg-gray-100 mt-4 p-2 rounded-sm w-full">
+            <div className={`bg-gray-100 mt-4 p-2 rounded-sm w-full ${isDarkMode ? 'text-gray-300' : 'text-gray-800'}`}>
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1">
-                  <span className="text-xs font-semibold text-gray-600">
+                  <span className={`text-xs font-semibold ${isDarkMode ? 'text-gray-600' : 'text-gray-800'}`}>
                     Quantity
                   </span>
-                  <span className="text-xs font-bold">
+                  <span className={`text-xs font-bold ${isDarkMode ? 'text-gray-600' : 'text-gray-800'}`}>
                     {listing.quantity}
                   </span>
                 </div>
                 <div className="flex flex-col gap-1">
-                  <span className="text-xs font-semibold text-gray-600">
+                  <span className={`text-xs font-semibold ${isDarkMode ? 'text-gray-600' : 'text-gray-800'}`}>
                     Expiry
                   </span>
-                  <span className="text-xs font-bold">
+                  <span className={`text-xs font-bold ${isDarkMode ? 'text-gray-600' : 'text-gray-800'}`}>
                     {listing.expiry} hr
                   </span>
                 </div>
@@ -228,42 +230,44 @@ const RestaurantListingsPage = () => {
             <button onClick={handleCloseUpdateModal} className="absolute top-0 right-0 text-gray-600 p-2">
               Close
             </button>
-            <h2 className="text-xl font-semibold mb-4">Update Listing</h2>
+            <h2 className={`text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-600'}`}>Update Listing</h2>
             <div className="grid grid-cols-3 gap-4">
               <input
                 type="text"
                 placeholder="Name"
                 value={selectedName}
                 onChange={(e) => setSelectedName(e.target.value)}
-                className="p-2 border rounded-md"
+                className={`p-2 border rounded-md ${isDarkMode ? 'text-gray-300 bg-gray-700' : 'text-gray-600 bg-white'}`}
               />
               <input
                 type="number"
                 placeholder="Quantity in kgs"
                 value={selectedQuantity}
                 onChange={(e) => setSelectedQuantity(e.target.value)}
-                className="p-2 border rounded-md"
+                className={`p-2 border rounded-md ${isDarkMode ? 'text-gray-300 bg-gray-700' : 'text-gray-600 bg-white'}`}
               />
               <select
                 value={selectedExpiry}
                 onChange={(e) => setSelectedExpiry(e.target.value)}
-                className="p-2 border rounded-md"
+                className={`p-2 border rounded-md ${isDarkMode ? 'text-gray-300 bg-gray-700' : 'text-gray-600 bg-white'}`}
               >
                 <option value="">Select Expiry</option>
                 <option value="1">1 hr</option>
                 <option value="2">2 hrs</option>
                 <option value="3">3 hrs</option>
               </select>
-              <button onClick={handleUpdateListing} className="col-span-3 p-2 bg-blue-500 text-white rounded-md">
+              <button onClick={handleUpdateListing} className={`col-span-3 p-2 bg-blue-500 text-white rounded-md ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
                 Update
               </button>
             </div>
           </div>
         </div>
       )}
-      {showFeedback && <div className="feedback-box">{feedback}</div>}
+      {showFeedback && <div className={`feedback-box ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>{feedback}</div>}
     </div>
   );
+  
+  
 };
 
 export default RestaurantListingsPage;
