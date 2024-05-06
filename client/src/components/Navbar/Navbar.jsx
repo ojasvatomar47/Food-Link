@@ -112,6 +112,17 @@ export default function Navbar(props) {
                 </p>
               </li>
             </Link>
+
+            <Link to={`/about`}>
+              <li className="flex items-center">
+                <p
+                  className={`bg-gradient-to-r ${navbarOpen ? 'text-black' : isDarkMode ? 'text-white' : 'text-gray-500'} font-bold font-serif uppercase ${(location.pathname === '/' || location.pathname === '/ngo/profile' || location.pathname === '/restaurant/profile') ? (navbarOpen ? 'text-black' : 'text-white') : (navbarOpen && 'text-black')} px-4 py-2 rounded transition duration-300`}
+                  type="button"
+                >
+                  About Us
+                </p>
+              </li>
+            </Link>
           </ul>
         </div>
       </div>
