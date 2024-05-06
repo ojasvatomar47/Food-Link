@@ -13,13 +13,13 @@ export const DarkModeProvider = ({ children }) => {
         const newDarkMode = !isDarkMode;
         setIsDarkMode(newDarkMode);
         localStorage.setItem('darkMode', newDarkMode.toString()); // Convert boolean to string
-        console.log("Toggled Dark Mode:", newDarkMode); // Debugging
+        // console.log("Toggled Dark Mode:", newDarkMode); // Debugging
     };
 
     useEffect(() => {
         const savedDarkMode = localStorage.getItem('darkMode') === 'true';
         setIsDarkMode(savedDarkMode);
-        console.log("Initial Dark Mode:", savedDarkMode); // Debugging
+        // console.log("Initial Dark Mode:", savedDarkMode); // Debugging
     }, []);
 
     return (

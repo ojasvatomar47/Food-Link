@@ -21,6 +21,19 @@ const RestaurantTransactionsPage = () => {
   const [reviewMessage, setReviewMessage] = useState('');
   const { isDarkMode } = useDarkMode();
 
+  const imageUrls = [
+    "https://images.pexels.com/photos/262978/pexels-photo-262978.jpeg?auto=compress&cs=tinysrgb&w=600",
+    "https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg?auto=compress&cs=tinysrgb&w=600",
+    "https://images.pexels.com/photos/1537635/pexels-photo-1537635.jpeg?auto=compress&cs=tinysrgb&w=600",
+    "https://images.pexels.com/photos/2696064/pexels-photo-2696064.jpeg?auto=compress&cs=tinysrgb&w=600",
+    "https://images.pexels.com/photos/262918/pexels-photo-262918.jpeg?auto=compress&cs=tinysrgb&w=600",
+    "https://images.pexels.com/photos/1211887/pexels-photo-1211887.jpeg?auto=compress&cs=tinysrgb&w=600",
+    "https://images.pexels.com/photos/693269/pexels-photo-693269.jpeg?auto=compress&cs=tinysrgb&w=600",
+    "https://images.pexels.com/photos/858508/pexels-photo-858508.jpeg?auto=compress&cs=tinysrgb&w=600",
+    "https://images.pexels.com/photos/2074130/pexels-photo-2074130.jpeg?auto=compress&cs=tinysrgb&w=600",
+    "https://images.pexels.com/photos/671956/pexels-photo-671956.jpeg?auto=compress&cs=tinysrgb&w=600",
+  ];
+
   const fetchOrders = async () => {
     try {
       const response = await axios.get(`http://localhost:8800/api/orders/restaurant`, {
@@ -105,8 +118,8 @@ const RestaurantTransactionsPage = () => {
   };
 
   return (
-    <div className={`container mx-auto p-8 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-200'}`}>
-      {orders.map((order) => {
+    <div className={`container mx-auto p-8 pb-24 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-200'}`}>
+      {orders.map((order, index) => {
         const canReview = canReviewOrder(order);
         const reviewAdded = order.restReview || order.ngoReview;
 
@@ -123,9 +136,9 @@ const RestaurantTransactionsPage = () => {
             >
               {order.status}
             </div>
-            <img src={CardImage} alt="Order" className="h-1/2 w-auto mb-4 md:w-1/4 md:h-auto md:mr-4 rounded-md" />
+            <img src={imageUrls[index % 10]} alt="Order" className="h-1/2 w-auto mb-4 md:w-1/4 md:h-auto md:mr-4 rounded-md" />
             <div className="h-1/2 w-full md:w-3/4 flex flex-col">
-              <p className="text-md md:text-lg font-bold">NGO: {order.ngoName}</p>
+              <p className="text-md uppercase md:text-lg font-bold">NGO: {order.ngoName}</p>
               {order.status === 'requested' && (
                 <div className="flex mt-2">
                   <button

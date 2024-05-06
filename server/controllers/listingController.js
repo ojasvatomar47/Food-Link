@@ -10,7 +10,7 @@ export const getRestaurantListings = async (req, res) => {
         const listings = await Listing.find({ restaurantId: restaurantId, expiresAt: { $gte: new Date() } });
         res.json(listings);
     } catch (error) {
-        res.status(500).json({ message: 'Server Error' });
+        res.status(500).json({ message: 'Server Error', error: error });
     }
 };
 

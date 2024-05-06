@@ -9,6 +9,19 @@ const NGOListingsPage = () => {
     const [restaurants, setRestaurants] = useState([]);
     const { isDarkMode } = useDarkMode();
 
+    const imageUrls = [
+        "https://images.pexels.com/photos/262978/pexels-photo-262978.jpeg?auto=compress&cs=tinysrgb&w=600",
+        "https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg?auto=compress&cs=tinysrgb&w=600",
+        "https://images.pexels.com/photos/1537635/pexels-photo-1537635.jpeg?auto=compress&cs=tinysrgb&w=600",
+        "https://images.pexels.com/photos/2696064/pexels-photo-2696064.jpeg?auto=compress&cs=tinysrgb&w=600",
+        "https://images.pexels.com/photos/262918/pexels-photo-262918.jpeg?auto=compress&cs=tinysrgb&w=600",
+        "https://images.pexels.com/photos/1211887/pexels-photo-1211887.jpeg?auto=compress&cs=tinysrgb&w=600",
+        "https://images.pexels.com/photos/693269/pexels-photo-693269.jpeg?auto=compress&cs=tinysrgb&w=600",
+        "https://images.pexels.com/photos/858508/pexels-photo-858508.jpeg?auto=compress&cs=tinysrgb&w=600",
+        "https://images.pexels.com/photos/2074130/pexels-photo-2074130.jpeg?auto=compress&cs=tinysrgb&w=600",
+        "https://images.pexels.com/photos/671956/pexels-photo-671956.jpeg?auto=compress&cs=tinysrgb&w=600",
+    ];
+
     console.log(selectedListings);
 
     const { user } = useAuth();
@@ -98,13 +111,13 @@ const NGOListingsPage = () => {
         <div className={`container mx-auto p-8 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-200'}`}>
             {Object.keys(restaurants).map((restaurantName, index) => (
                 <div key={index} className="mb-8">
-                    <h2 className={`text-md md:text-xl font-semibold mb-4 ${isDarkMode ? 'text-white' : 'text-gray-600'}`}>
+                    <h2 className={`text-md md:text-xl font-semibold uppercase mb-4 ${isDarkMode ? 'text-white' : 'text-gray-600'}`}>
                         {restaurantName}
                     </h2>
                     <div className="flex overflow-x-auto">
                         {restaurants[restaurantName].map((listing, idx) => (
                             <div key={idx} className="card mr-4 md:min-w-[250px] min-w-[150px]">
-                                <img src={CardImage} alt={listing.name} className="object-cover w-full h-32 md:h-48 sm:w-auto sm:max-w-full" />
+                                <img src={imageUrls[index % 10]} alt={listing.name} className="object-cover w-full h-32 md:h-48 sm:w-auto sm:max-w-full" />
                                 <h2 className={`text-md md:text-lg font-semibold mt-4 ${isDarkMode ? 'text-gray-200' : 'text-gray-600'}`}>
                                     {listing.name}
                                 </h2>
@@ -136,8 +149,8 @@ const NGOListingsPage = () => {
             ))}
         </div>
     );
-    
-    
+
+
 };
 
 export default NGOListingsPage;

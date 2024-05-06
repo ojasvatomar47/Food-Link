@@ -123,7 +123,7 @@ const ChatRoomPage = () => {
   return (
     <div className={`container mx-auto p-8 flex flex-col h-screen ${isDarkMode ? 'bg-gray-800' : 'bg-gray-200'}`}>
       {orderDetails && (
-        <div className={`flex flex-col order-details p-4 bg-white rounded-lg shadow-md mb-4 ${isDarkMode ? 'text-gray-300 bg-gray-700' : 'text-gray-600 hover:bg-gray-100 transition duration-300 ease-in-out'}`}>
+        <div className={`flex flex-col order-details p-4 rounded-lg shadow-md mb-4 ${isDarkMode ? 'text-gray-300 bg-gray-700' : 'text-gray-600 bg-white hover:bg-gray-100 transition duration-300 ease-in-out'}`}>
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold">Order #{orderId}</h2>
             <div className={`text-xs md:text-lg font-semibold py-1 px-2 text-white rounded capitalize 

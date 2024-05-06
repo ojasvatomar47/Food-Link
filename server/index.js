@@ -16,6 +16,7 @@ const PORT = process.env.PORT || 8800;
 import authRoutes from './routes/authRoutes.js';
 import listingRoutes from './routes/listingRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
+import userRoutes from './routes/userRoutes.js'
 
 connectDB();
 
@@ -27,6 +28,7 @@ app.use(cors({
 app.use('/api', authRoutes);
 app.use('/api', listingRoutes);
 app.use('/api', orderRoutes);
+app.use('/api', userRoutes);
 
 io.on('connection', (socket) => {
     console.log('A user connected!');

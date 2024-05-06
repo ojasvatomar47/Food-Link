@@ -11,7 +11,7 @@ export const registerUser = async (req, res) => {
         const existingUser = await User.findOne({ email });
 
         if (existingUser) {
-            throw new Error('User already exists with this email');
+            throw new Error('User already exists with this Email');
         }
 
         // Hash password
@@ -46,14 +46,14 @@ export const loginUser = async (req, res) => {
         const user = await User.findOne({ email });
 
         if (!user) {
-            throw new Error('Email not found');
+            throw new Error('The Email you entered is not registered!');
         }
 
         // Verify password
         const isPasswordValid = await bcrypt.compare(password, user.password);
 
         if (!isPasswordValid) {
-            throw new Error('Invalid password');
+            throw new Error('The password you entered is invalid!');
         }
 
         // Generate JWT token
